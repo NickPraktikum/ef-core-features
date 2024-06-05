@@ -1,4 +1,5 @@
-﻿using Experiments.Models;
+﻿using Configurations.Configurations;
+using Experiments.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -111,21 +112,4 @@ internal class ExperimentDbContext : DbContext
     public DbSet<Book> Books { get; set; }
 
     #endregion
-}
-
-internal class AuthorEntityConfiguration : IEntityTypeConfiguration<Author>
-{
-    public void Configure(EntityTypeBuilder<Author> builder)
-    {
-        builder.Navigation(author => author.Books)
-            .AutoInclude();
-    }
-}
-
-internal class BookEntityConfiguration : IEntityTypeConfiguration<Book>
-{
-    public void Configure(EntityTypeBuilder<Book> builder)
-    {
-        builder.HasQueryFilter(book => book.Price > 30);
-    }
 }
