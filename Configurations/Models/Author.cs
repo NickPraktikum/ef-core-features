@@ -4,7 +4,7 @@
     /// <summary>
     /// A simple author model.
     /// </summary>
-    internal class Author
+    public class Author
     {
         #region properties
 

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configurations", "Experiments\Configurations.csproj", "{CCF4FFED-5D48-4AA5-9BF3-D4B618668823}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configurations", "Configurations\Configurations.csproj", "{CCF4FFED-5D48-4AA5-9BF3-D4B618668823}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalTable", "ShadowProps\TemporalTable.csproj", "{D748A795-74E2-473E-81B3-3793DBB92A38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalTable", "Temporal-tables\TemporalTable.csproj", "{D748A795-74E2-473E-81B3-3793DBB92A38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
