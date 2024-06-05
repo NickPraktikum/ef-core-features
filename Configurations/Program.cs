@@ -48,42 +48,12 @@ class MyApp
     public async Task StartAsync()
     {
         // Retrieve all authors including related entities (books).
-        var authorsWithBooks = await _context.Authors.IgnoreAutoIncludes().Include(b=>b.Books).IgnoreQueryFilters().ToListAsync();
-        // var authorsWithBooks = await _context.Authors.IgnoreAutoIncludes()IgnoreQueryFilters().ToListAsync();
-        foreach (var author in authorsWithBooks)
-        {
-            if (author.Books.Count > 0)
-            {
-                _logger.LogInformation($"{author.FirstName} {author.SecondName} has these books: ");
-                foreach (var book in author.Books)
-                {
-                    _logger.LogInformation($"Book {book.BookId}: {book.Title}");
-                }
-            }
-        }
-
-        // Retrieve all authors including related entities (books). The books with will be fetched in a split query
-        var authorsWithBooksAsSplitQuery = await _context.Authors.AsSplitQuery().IgnoreQueryFilters().ToListAsync();
-        // var authorsWithBooks = await _context.Authors.IgnoreAutoIncludes().ToListAsync();
-
+        var authorsWithBooks = await _context.Authors.ToListAsync();
+        var authorsWithoutBooks = await _context.Authors.IgnoreAutoIncludes().AsNoTracking().ToListAsync();
+  
         // Retrieve filtered authors. The filter is set in the entity configuration (authors whose age is bigger 5)
-        var authorsWithAge = await _context.Authors.IgnoreAutoIncludes().ToListAsync();
-        foreach (var author in authorsWithAge)
-        {
-            _logger.LogInformation($"{author.FirstName} {author.SecondName} is {author.Age} years old");
-        }
-
-        // The usage of Sql method SoundEx
-        var soughtForTitle = "Title";
-        var detectedBooks = await _context.Books.Where(book => ExperimentDbContext.SoundEx(book.Title) == ExperimentDbContext.SoundEx(soughtForTitle)).ToListAsync();
-        if(detectedBooks.Count > 0)
-        {
-            foreach (var book in detectedBooks)
-            {
-                _logger.LogInformation($"Detected titles({book.Title}) that are phonetically alike to {soughtForTitle}");
-            }
-        }
-        _logger.LogInformation($"Didn't detect titles that are phonetically alike to {soughtForTitle}");
+        var booksWithPriceFiltation = await _context.Books.IgnoreAutoIncludes().ToListAsync();
+        var booksWithoutPriceFiltation = await _context.Books.IgnoreAutoIncludes().IgnoreQueryFilters().ToListAsync();
     }
 }
 
@@ -117,13 +87,6 @@ internal class ExperimentDbContext : DbContext
 
     #endregion
 
-    #region DbFunctions
-    [DbFunction(Name = "SoundEx", Schema = "dbo", IsBuiltIn = true, IsNullable = false)]
-    public static string SoundEx(string input)
-    {
-        throw new NotImplementedException();
-    }
-    #endregion
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -139,6 +102,8 @@ internal class ExperimentDbContext : DbContext
             x.HasIndex(i => i.FirstName, "IX_Author_FirstName");
         });
         modelBuilder.ApplyConfiguration(new AuthorEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new BookEntityConfiguration());
+
     }
     #region properties
 
@@ -154,6 +119,13 @@ internal class AuthorEntityConfiguration : IEntityTypeConfiguration<Author>
     {
         builder.Navigation(author => author.Books)
             .AutoInclude();
-        builder.HasQueryFilter(author => author.Age>5);
+    }
+}
+
+internal class BookEntityConfiguration : IEntityTypeConfiguration<Book>
+{
+    public void Configure(EntityTypeBuilder<Book> builder)
+    {
+        builder.HasQueryFilter(book => book.Price > 30);
     }
 }
