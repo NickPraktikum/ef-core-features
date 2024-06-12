@@ -51,8 +51,9 @@ class MyApp
         // Retrieve all authors including related entities (books).
         var authorsWithBooks = await _context.Authors.ToListAsync();
         var authorsWithoutBooks = await _context.Authors.IgnoreAutoIncludes().AsNoTracking().ToListAsync();
+        
   
-        // Retrieve filtered authors. The filter is set in the entity configuration (authors whose age is bigger 5)
+        // Retrieve filtered books, which price is higher than 30 dollars.
         var booksWithPriceFiltation = await _context.Books.IgnoreAutoIncludes().ToListAsync();
         var booksWithoutPriceFiltation = await _context.Books.IgnoreAutoIncludes().IgnoreQueryFilters().ToListAsync();
     }
@@ -104,7 +105,6 @@ internal class ExperimentDbContext : DbContext
         });
         modelBuilder.ApplyConfiguration(new AuthorEntityConfiguration());
         modelBuilder.ApplyConfiguration(new BookEntityConfiguration());
-
     }
     #region properties
 
