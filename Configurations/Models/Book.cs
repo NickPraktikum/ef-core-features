@@ -7,9 +7,9 @@
     /// </summary>
     public class Book
     {
-        [Column(nameof(BookId), Order = 1)]
+        [Column(nameof(Id), Order = 1)]
         [Key]
-        public long BookId { get; set; }
+        public long Id { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -24,5 +24,8 @@
 
         [Required]
         public float Price { get; set; }
+
+        [Required]
+        public long AuthorId { get; set; }
     }
 }

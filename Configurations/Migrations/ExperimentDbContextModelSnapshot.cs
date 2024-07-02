@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Experiments.Migrations
+namespace Configurations.Migrations
 {
     [DbContext(typeof(ExperimentDbContext))]
     partial class ExperimentDbContextModelSnapshot : ModelSnapshot
@@ -21,13 +21,13 @@ namespace Experiments.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Author", b =>
+            modelBuilder.Entity("Experiments.Models.Author", b =>
                 {
-                    b.Property<long>("AuthorId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AuthorId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<int>("Age")
                         .HasColumnType("int");
@@ -45,22 +45,24 @@ namespace Experiments.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("AuthorId");
+                    b.HasKey("Id");
 
                     b.HasIndex(new[] { "FirstName" }, "IX_Author_FirstName");
 
                     b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("Book", b =>
+            modelBuilder.Entity("Experiments.Models.Book", b =>
                 {
-                    b.Property<long>("BookId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id")
+                        .HasColumnOrder(1);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("BookId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("AuthorId")
+                    b.Property<long>("AuthorId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Isbn")
@@ -79,7 +81,7 @@ namespace Experiments.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("BookId");
+                    b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
@@ -88,17 +90,19 @@ namespace Experiments.Migrations
                     b.HasIndex(new[] { "Isbn" }, "UX_Books_Isbn")
                         .IsUnique();
 
-                    b.ToTable("Book");
+                    b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("Book", b =>
+            modelBuilder.Entity("Experiments.Models.Book", b =>
                 {
-                    b.HasOne("Author", null)
+                    b.HasOne("Experiments.Models.Author", null)
                         .WithMany("Books")
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("Author", b =>
+            modelBuilder.Entity("Experiments.Models.Author", b =>
                 {
                     b.Navigation("Books");
                 });

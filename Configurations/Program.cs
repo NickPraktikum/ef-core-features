@@ -2,17 +2,17 @@
 using Experiments.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 
 // Create a hosted app and run it
 var builder = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
-        services.AddTransient<MyApp>();
+        services.AddSingleton<MyApp>();
         services.AddDbContext<ExperimentDbContext>(
             (s, b) =>
             {
@@ -51,35 +51,34 @@ class MyApp
         // Retrieve all authors including related entities (books).
         var authorsWithBooks = await _context.Authors.ToListAsync();
         var authorsWithoutBooks = await _context.Authors.IgnoreAutoIncludes().AsNoTracking().ToListAsync();
-        
-  
+
+
         // Retrieve filtered books, which price is higher than 30 dollars.
         var booksWithPriceFiltation = await _context.Books.IgnoreAutoIncludes().ToListAsync();
         var booksWithoutPriceFiltation = await _context.Books.IgnoreAutoIncludes().IgnoreQueryFilters().ToListAsync();
     }
-}
 
-class ExperimentDesignTimeDbContextFactory : IDesignTimeDbContextFactory<ExperimentDbContext>
-{
-    /// <inheritdoc />
-    public ExperimentDbContext CreateDbContext(string[] args)
+    class ExperimentDesignTimeDbContextFactory : IDesignTimeDbContextFactory<ExperimentDbContext>
     {
-        var options = new DbContextOptionsBuilder<ExperimentDbContext>().UseSqlServer(
-                "Data Source=.;Initial Catalog=Experiments;Integrated Security=False;User ID=sa;Password=Sql-Server-Dev;Encrypt=True;TrustServerCertificate=True;Application Name=EfExperiments",
-                o =>
-                {
-                    o.MigrationsHistoryTable("MigrationHistory", "SystemData");
-                    o.CommandTimeout(3600);
-                }).UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
-            .Options;
-        return new ExperimentDbContext(options);
+        /// <inheritdoc />
+        public ExperimentDbContext CreateDbContext(string[] args)
+        {
+            var options = new DbContextOptionsBuilder<ExperimentDbContext>().UseSqlServer(
+                    "Data Source=.;Initial Catalog=Experiments;Integrated Security=False;User ID=sa;Password=Sql-Server-Dev;Encrypt=True;TrustServerCertificate=True;Application Name=EfExperiments",
+                    o =>
+                    {
+                        o.MigrationsHistoryTable("MigrationHistory", "SystemData");
+                        o.CommandTimeout(3600);
+                    }).UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
+                .Options;
+            return new ExperimentDbContext(options);
+        }
     }
 }
-
 /// <summary>
 /// The central type which "talks" to the database.
 /// </summary>
-internal class ExperimentDbContext : DbContext
+public class ExperimentDbContext : DbContext
 {
     #region constructors and destructors
 

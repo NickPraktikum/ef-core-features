@@ -9,7 +9,7 @@
         #region properties
 
         [Key]
-        public long AuthorId { get; set; }
+        public long Id { get; set; }
 
         [Required]
         [StringLength(20)]
