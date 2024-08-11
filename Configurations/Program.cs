@@ -48,14 +48,11 @@ class MyApp
 
     public async Task StartAsync()
     {
-        // Retrieve all authors including related entities (books).
-        var authorsWithBooks = await _context.Authors.ToListAsync();
-        var authorsWithoutBooks = await _context.Authors.IgnoreAutoIncludes().AsNoTracking().ToListAsync();
+
 
 
         // Retrieve filtered books, which price is higher than 30 dollars.
-        var booksWithPriceFiltation = await _context.Books.IgnoreAutoIncludes().ToListAsync();
-        var booksWithoutPriceFiltation = await _context.Books.IgnoreAutoIncludes().IgnoreQueryFilters().ToListAsync();
+        var booksWithoutPriceFiltation = await _context.Books.IgnoreQueryFilters().ToListAsync();
     }
 
     class ExperimentDesignTimeDbContextFactory : IDesignTimeDbContextFactory<ExperimentDbContext>
