@@ -11,13 +11,14 @@ using Microsoft.Extensions.Logging;
 var builder = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
-        services.AddTransient<MyApp>();
+        services.AddSingleton<MyApp>();
         services.AddDbContext<InterceptorDbContext>(
             (services, options) =>
             {
                 var config = services.GetRequiredService<IConfiguration>();
                 var connectionString = config.GetConnectionString("Interceptor");
-                options.AddInterceptors(new SoftDeleteInterceptor());
+                options.AddInterceptors(new SoftDeleteInterceptor(), new VersionInterceptor());
+
                 options.UseSqlServer(
                     connectionString,
                     a =>
@@ -49,7 +50,8 @@ class MyApp
 
     public async Task StartAsync()
     {
-        await _context.Books.AddAsync(new BookEntity() { AuthorId = 1, Isbn = "fdjkgfsg13", Pages = 10, Title = "New Book", Price = 100 });
+        var book = await _context.Books.SingleOrDefaultAsync(book => book.Id == 10010);
+        _context.Books.Remove(book);
         await _context.SaveChangesAsync();
     }
 
