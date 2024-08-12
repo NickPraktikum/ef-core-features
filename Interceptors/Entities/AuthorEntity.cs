@@ -1,8 +1,9 @@
 ﻿namespace Interceptors.Entities
 {
+    using global::Interceptors.Interfaces;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    public class AuthorEntity
+    public class AuthorEntity : ISoftDelete
     {
         #region properties
 
@@ -32,7 +33,7 @@
         public DateTimeOffset? DeletedAt { get; set; } = null!;
 
         [ForeignKey("AuthorId")]
-        public ICollection<BookEntity>? Books { get; set; }
+        public ICollection<BookEntity>? Books { get; set; } = new List<BookEntity>();
         #endregion
     }
 }

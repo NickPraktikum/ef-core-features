@@ -1,4 +1,5 @@
 ﻿using Interceptors.Entities;
+using Interceptors.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -12,17 +13,19 @@ var builder = Host.CreateDefaultBuilder(args)
     {
         services.AddTransient<MyApp>();
         services.AddDbContext<InterceptorDbContext>(
-            (s, b) =>
+            (services, options) =>
             {
-                var config = s.GetRequiredService<IConfiguration>();
+                var config = services.GetRequiredService<IConfiguration>();
                 var connectionString = config.GetConnectionString("Interceptor");
-                b.UseSqlServer(
+                options.AddInterceptors(new SoftDeleteInterceptor());
+                options.UseSqlServer(
                     connectionString,
                     a =>
                     {
                         a.MigrationsHistoryTable("MigrationHistory", "SystemData");
                         a.CommandTimeout(20);
                     });
+                
             });
     });
 var app = builder.Build();
@@ -46,13 +49,8 @@ class MyApp
 
     public async Task StartAsync()
     {
-
-        var books = await _context.Books.ToListAsync();
-        var authors = await _context.Authors.ToListAsync();
-        await _context.Authors.AddAsync(new AuthorEntity() { FirstName="John", SecondName="Doe", BirthDate = new DateTimeOffset(), Books = new List<BookEntity>()});
-        await _context.Books.AddAsync(new BookEntity() { AuthorId = 1, Isbn = "fdjkgfsg", Pages = 10, Title = "New Book", Price = 100});
+        await _context.Books.AddAsync(new BookEntity() { AuthorId = 1, Isbn = "fdjkgfsg13", Pages = 10, Title = "New Book", Price = 100 });
         await _context.SaveChangesAsync();
-
     }
 
     class InterceptorDesignTimeDbContextFactory : IDesignTimeDbContextFactory<InterceptorDbContext>

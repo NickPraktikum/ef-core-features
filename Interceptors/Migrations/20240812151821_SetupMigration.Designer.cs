@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Interceptors.Migrations
 {
     [DbContext(typeof(InterceptorDbContext))]
-    [Migration("20240811215319_SetupMigration")]
+    [Migration("20240812151821_SetupMigration")]
     partial class SetupMigration
     {
         /// <inheritdoc />

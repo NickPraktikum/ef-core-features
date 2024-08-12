@@ -3,8 +3,9 @@ namespace Interceptors.Entities
 { 
     using System.ComponentModel.DataAnnotations.Schema;
     using System.ComponentModel.DataAnnotations;
+    using global::Interceptors.Interfaces;
 
-    public class BookEntity
+    public class BookEntity : ISoftDelete, IVersion
     {
         #region properties
         [Key]
