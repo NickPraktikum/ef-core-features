@@ -1,4 +1,5 @@
-﻿using Interceptors.Entities;
+﻿using Interceptors.Configurations;
+using Interceptors.Entities;
 using Interceptors.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -50,8 +51,8 @@ class MyApp
 
     public async Task StartAsync()
     {
-        var book = await _context.Books.SingleOrDefaultAsync(book => book.Id == 10010);
-        _context.Books.Remove(book);
+        var book = await _context.Books.IgnoreQueryFilters().FirstOrDefaultAsync(book => book.Id == 20002);
+        book!.Isbn = "gfgjdhgfj";
         await _context.SaveChangesAsync();
     }
 
@@ -99,6 +100,8 @@ public class InterceptorDbContext : DbContext
         {
             x.HasIndex(i => i.FirstName, "IX_AuthorEntity_FirstName");
         });
+        modelBuilder.ApplyConfiguration(new BookEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new AuthorEntityConfiguration());
     }
     #region properties
 
