@@ -18,8 +18,6 @@ var builder = Host.CreateDefaultBuilder(args)
             {
                 var config = services.GetRequiredService<IConfiguration>();
                 var connectionString = config.GetConnectionString("Interceptor");
-                options.AddInterceptors(new SoftDeleteInterceptor(), new VersionInterceptor());
-
                 options.UseSqlServer(
                     connectionString,
                     a =>
@@ -50,10 +48,11 @@ class MyApp
     }
 
     public async Task StartAsync()
-    {
-        var book = await _context.Books.IgnoreQueryFilters().FirstOrDefaultAsync(book => book.Id == 20002);
-        book!.Isbn = "gfgjdhgfj";
+    { 
+        var book = new BookEntity { Isbn = "12345abcdef", Title = "Ivanhoe: A Romance", Pages = 458, Price = 12.56f, AuthorId=2 };
+        await _context.Books.AddAsync(book);
         await _context.SaveChangesAsync();
+        var books = await _context.Books.ToListAsync();
     }
 
     class InterceptorDesignTimeDbContextFactory : IDesignTimeDbContextFactory<InterceptorDbContext>
@@ -84,6 +83,11 @@ public class InterceptorDbContext : DbContext
     {
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(new SoftDeleteInterceptor());
+        optionsBuilder.AddInterceptors(new VersionInterceptor());
+    }
     #endregion
 
 
