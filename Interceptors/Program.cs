@@ -49,10 +49,7 @@ class MyApp
 
     public async Task StartAsync()
     { 
-        var book = new BookEntity { Isbn = "12345abcdef", Title = "Ivanhoe: A Romance", Pages = 458, Price = 12.56f, AuthorId=2 };
-        await _context.Books.AddAsync(book);
-        await _context.SaveChangesAsync();
-        var books = await _context.Books.ToListAsync();
+        var books = await _context.Books.IgnoreQueryFilters().ToListAsync();
     }
 
     class InterceptorDesignTimeDbContextFactory : IDesignTimeDbContextFactory<InterceptorDbContext>
@@ -96,9 +93,9 @@ public class InterceptorDbContext : DbContext
     {
         modelBuilder.Entity<BookEntity>(x =>
         {
-            x.HasIndex(i => i.Isbn, "UX_BookEntitys_Isbn")
+            x.HasIndex(i => i.Isbn, "UX_BookEntities_Isbn")
                 .IsUnique();
-            x.HasIndex(i => i.Title, "IX_BookEntitys_Title");
+            x.HasIndex(i => i.Title, "IX_BookEntities_Title");
         });
         modelBuilder.Entity<AuthorEntity>(x =>
         {
