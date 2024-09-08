@@ -5,7 +5,7 @@
     /// <summary>
     /// A simple author model.
     /// </summary>
-    internal class Author
+    internal class AuthorEntity
     {
         #region properties
 
@@ -26,7 +26,7 @@
         [Required]
         public DateTimeOffset BirthDate { get; set; }
 
-        public List<Book> Books { get; set; } = new();
+        public List<BookEntity> Books { get; set; } = new();
 
         #endregion
     }

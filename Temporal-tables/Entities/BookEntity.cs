@@ -2,7 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
 
-    internal class Book
+    internal class BookEntity
     {
         [Key]
         public long BookId { get; set; }

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
@@ -46,8 +45,6 @@ class MyApp
         _context = context;
     }
 
-
-
     public async Task StartAsync()
     { 
         // Return when the authors were last updated
@@ -70,22 +67,6 @@ class MyApp
     }
 }
 
-class ShadowPropertiesDesignTimeDbContextFactory : IDesignTimeDbContextFactory<ExperimentDbContext>
-{
-    /// <inheritdoc />
-    public ExperimentDbContext CreateDbContext(string[] args)
-    {
-        var options = new DbContextOptionsBuilder<ExperimentDbContext>().UseSqlServer(
-                 "Data Source=.;Initial Catalog=ShadowPropExperiments;Integrated Security=False;User ID=sa;Password=Sql-Server-Dev;Encrypt=True;TrustServerCertificate=True;Application Name=ShadowPropExperiments",
-                o =>
-                {
-                    o.MigrationsHistoryTable("MigrationHistory", "SystemData");
-                    o.CommandTimeout(3600);
-                })
-            .Options;
-        return new ExperimentDbContext(options);
-    }
-}
 
 /// <summary>
 /// The central type which "talks" to the database.
@@ -103,32 +84,46 @@ internal class ExperimentDbContext : DbContext
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Book>(x =>
+        modelBuilder.Entity<BookEntity>(x =>
         {
             x.HasIndex(i => i.Isbn, "UX_Books_Isbn")
                 .IsUnique();
             x.HasIndex(i => i.Title, "IX_Books_Title");
 
         });
-        modelBuilder.Entity<Author>(x =>
+        modelBuilder.Entity<AuthorEntity>(x =>
         {
             x.HasIndex(i => i.FirstName, "IX_Author_FirstName");
         });
-        modelBuilder.Entity<Author>()
-            .Property<DateTime>("LastUpdated");
+        modelBuilder.Entity<BookEntity>()
+                        .ToTable(
+                            tb => tb.IsTemporal(
+                                ttb =>
+                                {
+                                    ttb.HasPeriodStart("BookCreation");
+                                    ttb.HasPeriodEnd("BookRemoval");
+                                }));
+        modelBuilder.Entity<AuthorEntity>()
+            .ToTable(
+                tb => tb.IsTemporal(
+                    ttb =>
+                    {
+                        ttb.HasPeriodStart("AuthorCreation");
+                        ttb.HasPeriodEnd("AuthorRemoval");
+                    }));
         modelBuilder.ApplyConfiguration(new AuthorEntityConfiguration());
     }
     #region properties
 
-    public DbSet<Author> Authors { get; set; }
+    public DbSet<AuthorEntity> Authors { get; set; }
 
 
     #endregion
 }
 
-internal class AuthorEntityConfiguration : IEntityTypeConfiguration<Author>
+internal class AuthorEntityConfiguration : IEntityTypeConfiguration<AuthorEntity>
 {
-    public void Configure(EntityTypeBuilder<Author> builder)
+    public void Configure(EntityTypeBuilder<AuthorEntity> builder)
     {
         builder.Navigation(author => author.Books)
             .AutoInclude();

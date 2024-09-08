@@ -52,22 +52,6 @@ class MyApp
         var books = await _context.Books.IgnoreQueryFilters().ToListAsync();
     }
 
-    class InterceptorDesignTimeDbContextFactory : IDesignTimeDbContextFactory<InterceptorDbContext>
-    {
-        /// <inheritdoc />
-        public InterceptorDbContext CreateDbContext(string[] args)
-        {
-            var options = new DbContextOptionsBuilder<InterceptorDbContext>().UseSqlServer(
-                    "Data Source=.;Initial Catalog=Interceptors;Integrated Security=False;User ID=sa;Password=Sql-Server-Dev;Encrypt=True;TrustServerCertificate=True;Application Name=EfInterceptors",
-                    o =>
-                    {
-                        o.MigrationsHistoryTable("MigrationHistory", "SystemData");
-                        o.CommandTimeout(3600);
-                    }).UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
-                .Options;
-            return new InterceptorDbContext(options);
-        }
-    }
 }
 /// <summary>
 /// The central type which "talks" to the database.

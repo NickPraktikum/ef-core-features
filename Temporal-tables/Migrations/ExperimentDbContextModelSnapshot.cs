@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ShadowProps.Migrations
+namespace TemporalTable.Migrations
 {
     [DbContext(typeof(ExperimentDbContext))]
     partial class ExperimentDbContextModelSnapshot : ModelSnapshot
@@ -21,7 +21,7 @@ namespace ShadowProps.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Author", b =>
+            modelBuilder.Entity("ShadowProps.Models.AuthorEntity", b =>
                 {
                     b.Property<long>("AuthorId")
                         .ValueGeneratedOnAdd()
@@ -32,6 +32,16 @@ namespace ShadowProps.Migrations
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("AuthorCreation")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("AuthorCreation");
+
+                    b.Property<DateTime>("AuthorRemoval")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("AuthorRemoval");
+
                     b.Property<DateTimeOffset>("BirthDate")
                         .HasColumnType("datetimeoffset");
 
@@ -39,19 +49,6 @@ namespace ShadowProps.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("PeriodEnd")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodEnd");
-
-                    b.Property<DateTime>("PeriodStart")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasColumnName("PeriodStart");
 
                     b.Property<string>("SecondName")
                         .IsRequired()
@@ -68,15 +65,15 @@ namespace ShadowProps.Migrations
                             {
                                 ttb.UseHistoryTable("AuthorsHistory");
                                 ttb
-                                    .HasPeriodStart("PeriodStart")
-                                    .HasColumnName("PeriodStart");
+                                    .HasPeriodStart("AuthorCreation")
+                                    .HasColumnName("AuthorCreation");
                                 ttb
-                                    .HasPeriodEnd("PeriodEnd")
-                                    .HasColumnName("PeriodEnd");
+                                    .HasPeriodEnd("AuthorRemoval")
+                                    .HasColumnName("AuthorRemoval");
                             }));
                 });
 
-            modelBuilder.Entity("Book", b =>
+            modelBuilder.Entity("ShadowProps.Models.BookEntity", b =>
                 {
                     b.Property<long>("BookId")
                         .ValueGeneratedOnAdd()
@@ -84,8 +81,18 @@ namespace ShadowProps.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("BookId"));
 
-                    b.Property<long?>("AuthorId")
+                    b.Property<long?>("AuthorEntityAuthorId")
                         .HasColumnType("bigint");
+
+                    b.Property<DateTime>("BookCreation")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("BookCreation");
+
+                    b.Property<DateTime>("BookRemoval")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("BookRemoval");
 
                     b.Property<string>("Isbn")
                         .IsRequired()
@@ -102,24 +109,35 @@ namespace ShadowProps.Migrations
 
                     b.HasKey("BookId");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("AuthorEntityAuthorId");
 
                     b.HasIndex(new[] { "Title" }, "IX_Books_Title");
 
                     b.HasIndex(new[] { "Isbn" }, "UX_Books_Isbn")
                         .IsUnique();
 
-                    b.ToTable("Book");
+                    b.ToTable("BookEntity");
+
+                    b.ToTable(tb => tb.IsTemporal(ttb =>
+                            {
+                                ttb.UseHistoryTable("BookEntityHistory");
+                                ttb
+                                    .HasPeriodStart("BookCreation")
+                                    .HasColumnName("BookCreation");
+                                ttb
+                                    .HasPeriodEnd("BookRemoval")
+                                    .HasColumnName("BookRemoval");
+                            }));
                 });
 
-            modelBuilder.Entity("Book", b =>
+            modelBuilder.Entity("ShadowProps.Models.BookEntity", b =>
                 {
-                    b.HasOne("Author", null)
+                    b.HasOne("ShadowProps.Models.AuthorEntity", null)
                         .WithMany("Books")
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorEntityAuthorId");
                 });
 
-            modelBuilder.Entity("Author", b =>
+            modelBuilder.Entity("ShadowProps.Models.AuthorEntity", b =>
                 {
                     b.Navigation("Books");
                 });
