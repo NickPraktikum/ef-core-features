@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ShadowProps.Models;
+using TemporalTable.Models;
 
 // create a hosted app and run it
 var builder = Host.CreateDefaultBuilder(args)
@@ -47,23 +46,7 @@ class MyApp
 
     public async Task StartAsync()
     { 
-        // Return when the authors were last updated
-        var authors = await _context.Authors.ToListAsync();
-        foreach (var author in authors)
-        {
-            _logger.LogInformation($"{author.FirstName} {author.SecondName} was last updated {_context.Entry(author).Property("LastUpdated").CurrentValue}");
-        }
-
-        _logger.LogInformation("\v \v");
-
-        //Retrieve authors that were created before a certain date(dateTimeStart).
-        var dateTimeStart = new DateTime(2023, 12, 26, 13, 02, 51, 409);
-        var dateTimeEnd = new DateTime(9999, 12, 31, 23, 59, 59, 999);
-        var authorsHistory = await _context.Authors
-        .TemporalFromTo(dateTimeEnd, dateTimeStart)
-        .IgnoreAutoIncludes()
-        .ToListAsync();
-        _logger.LogInformation($"Last authorId is {authorsHistory[authorsHistory.Count-1].AuthorId}");
+        var author = new AuthorEntity { FirstName = "John", SecondName = "Doe", Age = 25,  };
     }
 }
 
