@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TemporalTable.Migrations
 {
     [DbContext(typeof(ExperimentDbContext))]
-    [Migration("20240908205511_SetupMigration")]
+    [Migration("20240909080911_SetupMigration")]
     partial class SetupMigration
     {
         /// <inheritdoc />
@@ -24,16 +24,15 @@ namespace TemporalTable.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ShadowProps.Models.AuthorEntity", b =>
+            modelBuilder.Entity("TemporalTable.Models.AuthorEntity", b =>
                 {
-                    b.Property<long>("AuthorId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id")
+                        .HasColumnOrder(1);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AuthorId"));
-
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("AuthorCreation")
                         .ValueGeneratedOnAddOrUpdate()
@@ -46,19 +45,40 @@ namespace TemporalTable.Migrations
                         .HasColumnName("AuthorRemoval");
 
                     b.Property<DateTimeOffset>("BirthDate")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("BirthDate")
+                        .HasColumnOrder(12);
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("DeletedAt")
+                        .HasColumnOrder(30);
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("FirstName")
+                        .HasColumnOrder(10);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsDeleted")
+                        .HasColumnOrder(13);
 
                     b.Property<string>("SecondName")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("SecondName")
+                        .HasColumnOrder(11);
 
-                    b.HasKey("AuthorId");
+                    b.Property<int>("Version")
+                        .HasColumnType("int")
+                        .HasColumnName("Version")
+                        .HasColumnOrder(14);
+
+                    b.HasKey("Id");
 
                     b.HasIndex(new[] { "FirstName" }, "IX_Author_FirstName");
 
@@ -76,16 +96,20 @@ namespace TemporalTable.Migrations
                             }));
                 });
 
-            modelBuilder.Entity("ShadowProps.Models.BookEntity", b =>
+            modelBuilder.Entity("TemporalTable.Models.BookEntity", b =>
                 {
-                    b.Property<long>("BookId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id")
+                        .HasColumnOrder(1);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("BookId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("AuthorEntityAuthorId")
-                        .HasColumnType("bigint");
+                    b.Property<long>("AuthorId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("AuthorId")
+                        .HasColumnOrder(2);
 
                     b.Property<DateTime>("BookCreation")
                         .ValueGeneratedOnAddOrUpdate()
@@ -97,33 +121,59 @@ namespace TemporalTable.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("BookRemoval");
 
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("DeletedAt")
+                        .HasColumnOrder(30);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsDeleted")
+                        .HasColumnOrder(14);
+
                     b.Property<string>("Isbn")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("Isbn")
+                        .HasColumnOrder(10);
 
                     b.Property<int>("Pages")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("Pages")
+                        .HasColumnOrder(12);
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real")
+                        .HasColumnName("Price")
+                        .HasColumnOrder(13);
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("Title")
+                        .HasColumnOrder(11);
 
-                    b.HasKey("BookId");
+                    b.Property<int>("Version")
+                        .HasColumnType("int")
+                        .HasColumnName("Version")
+                        .HasColumnOrder(15);
 
-                    b.HasIndex("AuthorEntityAuthorId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex(new[] { "Title" }, "IX_Books_Title");
 
                     b.HasIndex(new[] { "Isbn" }, "UX_Books_Isbn")
                         .IsUnique();
 
-                    b.ToTable("BookEntity");
+                    b.ToTable("Books");
 
                     b.ToTable(tb => tb.IsTemporal(ttb =>
                             {
-                                ttb.UseHistoryTable("BookEntityHistory");
+                                ttb.UseHistoryTable("BooksHistory");
                                 ttb
                                     .HasPeriodStart("BookCreation")
                                     .HasColumnName("BookCreation");
@@ -133,14 +183,16 @@ namespace TemporalTable.Migrations
                             }));
                 });
 
-            modelBuilder.Entity("ShadowProps.Models.BookEntity", b =>
+            modelBuilder.Entity("TemporalTable.Models.BookEntity", b =>
                 {
-                    b.HasOne("ShadowProps.Models.AuthorEntity", null)
+                    b.HasOne("TemporalTable.Models.AuthorEntity", null)
                         .WithMany("Books")
-                        .HasForeignKey("AuthorEntityAuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("ShadowProps.Models.AuthorEntity", b =>
+            modelBuilder.Entity("TemporalTable.Models.AuthorEntity", b =>
                 {
                     b.Navigation("Books");
                 });

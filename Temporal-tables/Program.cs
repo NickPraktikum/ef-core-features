@@ -46,7 +46,7 @@ class MyApp
 
     public async Task StartAsync()
     { 
-        var author = new AuthorEntity { FirstName = "John", SecondName = "Doe", Age = 25,  };
+        
     }
 }
 
@@ -99,7 +99,7 @@ internal class ExperimentDbContext : DbContext
     #region properties
 
     public DbSet<AuthorEntity> Authors { get; set; }
-
+    public DbSet<BookEntity> Books { get; set; }
 
     #endregion
 }

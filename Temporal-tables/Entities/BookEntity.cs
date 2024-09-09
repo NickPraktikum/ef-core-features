@@ -16,7 +16,7 @@
 
         [Required]
         [StringLength(100)]
-        [Column(nameof(Title), Order = 10)]
+        [Column(nameof(Isbn), Order = 10)]
         public string Isbn = default!;
 
         [Required]

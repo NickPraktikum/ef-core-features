@@ -15,7 +15,7 @@ namespace TemporalTable.Migrations
                 name: "Authors",
                 columns: table => new
                 {
-                    AuthorId = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1")
                         .Annotation("SqlServer:IsTemporal", true)
                         .Annotation("SqlServer:TemporalHistoryTableName", "AuthorsHistory")
@@ -34,13 +34,25 @@ namespace TemporalTable.Migrations
                         .Annotation("SqlServer:TemporalHistoryTableSchema", null)
                         .Annotation("SqlServer:TemporalPeriodEndColumnName", "AuthorRemoval")
                         .Annotation("SqlServer:TemporalPeriodStartColumnName", "AuthorCreation"),
-                    Age = table.Column<int>(type: "int", nullable: false)
+                    BirthDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                         .Annotation("SqlServer:IsTemporal", true)
                         .Annotation("SqlServer:TemporalHistoryTableName", "AuthorsHistory")
                         .Annotation("SqlServer:TemporalHistoryTableSchema", null)
                         .Annotation("SqlServer:TemporalPeriodEndColumnName", "AuthorRemoval")
                         .Annotation("SqlServer:TemporalPeriodStartColumnName", "AuthorCreation"),
-                    BirthDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                        .Annotation("SqlServer:IsTemporal", true)
+                        .Annotation("SqlServer:TemporalHistoryTableName", "AuthorsHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "AuthorRemoval")
+                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "AuthorCreation"),
+                    Version = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:IsTemporal", true)
+                        .Annotation("SqlServer:TemporalHistoryTableName", "AuthorsHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "AuthorRemoval")
+                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "AuthorCreation"),
+                    DeletedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                         .Annotation("SqlServer:IsTemporal", true)
                         .Annotation("SqlServer:TemporalHistoryTableName", "AuthorsHistory")
                         .Annotation("SqlServer:TemporalHistoryTableSchema", null)
@@ -61,7 +73,7 @@ namespace TemporalTable.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Authors", x => x.AuthorId);
+                    table.PrimaryKey("PK_Authors", x => x.Id);
                 })
                 .Annotation("SqlServer:IsTemporal", true)
                 .Annotation("SqlServer:TemporalHistoryTableName", "AuthorsHistory")
@@ -70,64 +82,89 @@ namespace TemporalTable.Migrations
                 .Annotation("SqlServer:TemporalPeriodStartColumnName", "AuthorCreation");
 
             migrationBuilder.CreateTable(
-                name: "BookEntity",
+                name: "Books",
                 columns: table => new
                 {
-                    BookId = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1")
                         .Annotation("SqlServer:IsTemporal", true)
-                        .Annotation("SqlServer:TemporalHistoryTableName", "BookEntityHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
                         .Annotation("SqlServer:TemporalHistoryTableSchema", null)
                         .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
                         .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
-                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    AuthorId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:IsTemporal", true)
-                        .Annotation("SqlServer:TemporalHistoryTableName", "BookEntityHistory")
-                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
-                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
-                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
-                    Pages = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:IsTemporal", true)
-                        .Annotation("SqlServer:TemporalHistoryTableName", "BookEntityHistory")
-                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
-                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
-                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
-                    AuthorEntityAuthorId = table.Column<long>(type: "bigint", nullable: true)
-                        .Annotation("SqlServer:IsTemporal", true)
-                        .Annotation("SqlServer:TemporalHistoryTableName", "BookEntityHistory")
-                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
-                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
-                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
-                    BookCreation = table.Column<DateTime>(type: "datetime2", nullable: false)
-                        .Annotation("SqlServer:IsTemporal", true)
-                        .Annotation("SqlServer:TemporalHistoryTableName", "BookEntityHistory")
-                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
-                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
-                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
-                    BookRemoval = table.Column<DateTime>(type: "datetime2", nullable: false)
-                        .Annotation("SqlServer:IsTemporal", true)
-                        .Annotation("SqlServer:TemporalHistoryTableName", "BookEntityHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
                         .Annotation("SqlServer:TemporalHistoryTableSchema", null)
                         .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
                         .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
                     Isbn = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                         .Annotation("SqlServer:IsTemporal", true)
-                        .Annotation("SqlServer:TemporalHistoryTableName", "BookEntityHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
+                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("SqlServer:IsTemporal", true)
+                        .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
+                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
+                    Pages = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:IsTemporal", true)
+                        .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
+                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
+                    Price = table.Column<float>(type: "real", nullable: false)
+                        .Annotation("SqlServer:IsTemporal", true)
+                        .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
+                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                        .Annotation("SqlServer:IsTemporal", true)
+                        .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
+                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
+                    Version = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:IsTemporal", true)
+                        .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
+                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
+                    DeletedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                        .Annotation("SqlServer:IsTemporal", true)
+                        .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
+                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
+                    BookCreation = table.Column<DateTime>(type: "datetime2", nullable: false)
+                        .Annotation("SqlServer:IsTemporal", true)
+                        .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
+                        .Annotation("SqlServer:TemporalHistoryTableSchema", null)
+                        .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
+                        .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation"),
+                    BookRemoval = table.Column<DateTime>(type: "datetime2", nullable: false)
+                        .Annotation("SqlServer:IsTemporal", true)
+                        .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
                         .Annotation("SqlServer:TemporalHistoryTableSchema", null)
                         .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
                         .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookEntity", x => x.BookId);
+                    table.PrimaryKey("PK_Books", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BookEntity_Authors_AuthorEntityAuthorId",
-                        column: x => x.AuthorEntityAuthorId,
+                        name: "FK_Books_Authors_AuthorId",
+                        column: x => x.AuthorId,
                         principalTable: "Authors",
-                        principalColumn: "AuthorId");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("SqlServer:IsTemporal", true)
-                .Annotation("SqlServer:TemporalHistoryTableName", "BookEntityHistory")
+                .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
                 .Annotation("SqlServer:TemporalHistoryTableSchema", null)
                 .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
                 .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation");
@@ -138,18 +175,18 @@ namespace TemporalTable.Migrations
                 column: "FirstName");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookEntity_AuthorEntityAuthorId",
-                table: "BookEntity",
-                column: "AuthorEntityAuthorId");
+                name: "IX_Books_AuthorId",
+                table: "Books",
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Books_Title",
-                table: "BookEntity",
+                table: "Books",
                 column: "Title");
 
             migrationBuilder.CreateIndex(
                 name: "UX_Books_Isbn",
-                table: "BookEntity",
+                table: "Books",
                 column: "Isbn",
                 unique: true);
         }
@@ -158,9 +195,9 @@ namespace TemporalTable.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BookEntity")
+                name: "Books")
                 .Annotation("SqlServer:IsTemporal", true)
-                .Annotation("SqlServer:TemporalHistoryTableName", "BookEntityHistory")
+                .Annotation("SqlServer:TemporalHistoryTableName", "BooksHistory")
                 .Annotation("SqlServer:TemporalHistoryTableSchema", null)
                 .Annotation("SqlServer:TemporalPeriodEndColumnName", "BookRemoval")
                 .Annotation("SqlServer:TemporalPeriodStartColumnName", "BookCreation");

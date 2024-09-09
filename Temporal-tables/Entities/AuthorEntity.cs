@@ -12,14 +12,17 @@
         #region properties
 
         [Key]
+        [Column(nameof(Id), Order = 1)]
         public long Id { get; set; }
 
         [Required]
         [StringLength(20)]
+        [Column(nameof(FirstName), Order = 10)]
         public string FirstName { get; set; } = default!;
 
         [Required]
         [StringLength(20)]
+        [Column(nameof(SecondName), Order = 11)]
         public string SecondName { get; set; } = default!;
 
         [Required]
