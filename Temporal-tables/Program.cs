@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using TemporalTable.Configurations;
+using TemporalTable.Interceptors;
 using TemporalTable.Models;
 
 // create a hosted app and run it
@@ -45,8 +47,8 @@ class MyApp
     }
 
     public async Task StartAsync()
-    { 
-        
+    {
+        var authors = await _context.Authors.IgnoreQueryFilters().ToListAsync();
     }
 }
 
@@ -64,6 +66,11 @@ internal class ExperimentDbContext : DbContext
 
     #endregion
 
+    /// <inheritdoc />
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(new VersionInterceptor(), new SoftDeleteInterceptor());
+    }
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -95,6 +102,7 @@ internal class ExperimentDbContext : DbContext
                         ttb.HasPeriodEnd("AuthorRemoval");
                     }));
         modelBuilder.ApplyConfiguration(new AuthorEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new BookEntityConfiguration());
     }
     #region properties
 
@@ -102,14 +110,4 @@ internal class ExperimentDbContext : DbContext
     public DbSet<BookEntity> Books { get; set; }
 
     #endregion
-}
-
-internal class AuthorEntityConfiguration : IEntityTypeConfiguration<AuthorEntity>
-{
-    public void Configure(EntityTypeBuilder<AuthorEntity> builder)
-    {
-        builder.Navigation(author => author.Books)
-            .AutoInclude();
-        builder.ToTable("Authors", o => o.IsTemporal());
-    }
 }

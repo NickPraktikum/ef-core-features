@@ -4,7 +4,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using TemporalTable.Interfaces;
 
-    internal class BookEntity : ISoftDelete, IVersion
+    public class BookEntity : ISoftDelete, IVersion
     {
         [Key]
         [Column(nameof(Id), Order = 1)]

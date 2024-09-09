@@ -7,7 +7,7 @@
     /// <summary>
     /// A simple author model.
     /// </summary>
-    internal class AuthorEntity : ISoftDelete, IVersion
+    public class AuthorEntity : ISoftDelete, IVersion
     {
         #region properties
 
