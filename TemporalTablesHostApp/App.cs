@@ -29,11 +29,9 @@ namespace TemporalTablesHostApp
         /// <returns>0 if the app ran succesfully otherwise 1.</returns>
         public async Task<int> StartAsync(string[] args)
         {
-            using (var context = _context) {
-                var todo = await context.Todos.FirstOrDefaultAsync(todo => todo.Id == 1);
-                context.Todos.Remove(todo!);
-                await context.SaveChangesAsync();
-            }
+            var todo = await _context.Todos.FirstOrDefaultAsync(todo => todo.Id == 1);
+            _context.Todos.Remove(todo!);
+            await _context.SaveChangesAsync();
             return 0;
         }
     }
