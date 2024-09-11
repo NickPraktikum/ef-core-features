@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using TemporalTable.Configurations;
 using TemporalTable.Interceptors;
 using TemporalTable.Models;
@@ -48,12 +49,16 @@ class MyApp
 
     public async Task StartAsync()
     {
-        var authors = await _context.Authors.IgnoreQueryFilters().ToListAsync();
+        var authorHistory = await _context
+         .Authors
+         .TemporalAll()
+         .IgnoreAutoIncludes()
+         .ToListAsync();
     }
 }
 
 
-/// <summary>
+/// <summary> 
 /// The central type which "talks" to the database.
 /// </summary>
 internal class ExperimentDbContext : DbContext

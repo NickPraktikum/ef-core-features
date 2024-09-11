@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configurations", "Configura
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemporalTable", "Temporal-tables\TemporalTable.csproj", "{D748A795-74E2-473E-81B3-3793DBB92A38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interceptors", "Interceptors\Interceptors.csproj", "{A3CE7363-AB3A-42A7-8443-9F192AAB486E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interceptors", "Interceptors\Interceptors.csproj", "{A3CE7363-AB3A-42A7-8443-9F192AAB486E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalTablesHostApp", "TemporalTablesHostApp\TemporalTablesHostApp.csproj", "{7FA7DB5E-A9B7-49EF-B216-303CD51C85BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{A3CE7363-AB3A-42A7-8443-9F192AAB486E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3CE7363-AB3A-42A7-8443-9F192AAB486E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3CE7363-AB3A-42A7-8443-9F192AAB486E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FA7DB5E-A9B7-49EF-B216-303CD51C85BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FA7DB5E-A9B7-49EF-B216-303CD51C85BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FA7DB5E-A9B7-49EF-B216-303CD51C85BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FA7DB5E-A9B7-49EF-B216-303CD51C85BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
