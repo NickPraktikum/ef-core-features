@@ -48,11 +48,24 @@ class MyApp
 
     public async Task StartAsync()
     {
-
-
-
         // Retrieve filtered books, which price is higher than 30 dollars.
         var booksWithoutPriceFiltation = await _context.Books.IgnoreQueryFilters().ToListAsync();
+    }
+    class ExperimentDesignTimeDbContextFactory : IDesignTimeDbContextFactory<ExperimentDbContext>
+    {
+        /// <inheritdoc />
+        public ExperimentDbContext CreateDbContext(string[] args)
+        {
+            var options = new DbContextOptionsBuilder<ExperimentDbContext>().UseSqlServer(
+                    "Data Source=.;Initial Catalog=Experiments;Integrated Security=False;User ID=sa;Password=Sql-Server-Dev;Encrypt=True;TrustServerCertificate=True;Application Name=EfExperiments",
+                    o =>
+                    {
+                        o.MigrationsHistoryTable("MigrationHistory", "SystemData");
+                        o.CommandTimeout(3600);
+                    }).UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
+                .Options;
+            return new ExperimentDbContext(options);
+        }
     }
 }
 /// <summary>

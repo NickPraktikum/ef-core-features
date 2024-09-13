@@ -10,7 +10,7 @@ var builder = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         // TODO add your service dependencies here
-        services.AddSingleton<App>();
+        services.AddTransient<App>();
         services.AddDbContext<BookContext>(
             (s, b) =>
             {

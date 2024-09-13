@@ -3,23 +3,21 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using TemporalTable.Data;
 
 #nullable disable
 
 namespace TemporalTable.Migrations
 {
-    [DbContext(typeof(ExperimentDbContext))]
-    [Migration("20240909080911_SetupMigration")]
-    partial class SetupMigration
+    [DbContext(typeof(BookStoreContext))]
+    partial class BookStoreContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -82,7 +80,7 @@ namespace TemporalTable.Migrations
 
                     b.HasIndex(new[] { "FirstName" }, "IX_Author_FirstName");
 
-                    b.ToTable("Authors", (string)null);
+                    b.ToTable("Authors");
 
                     b.ToTable(tb => tb.IsTemporal(ttb =>
                             {
