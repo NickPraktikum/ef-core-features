@@ -7,12 +7,8 @@
     {
         public BookStoreContext CreateDbContext(string[] args)
         {
-            IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
-            var connectionString = config.GetConnectionString("Authors");
             var options = new DbContextOptionsBuilder<BookStoreContext>()
-                .UseSqlServer(connectionString, options =>
+                .UseSqlServer("Data Source=.;Initial Catalog=TemporalTables;Integrated Security=False;User ID=sa;Password=Sql-Server-Dev;Encrypt=True;TrustServerCertificate=True;Application Name=EfTemporalTables", options =>
                 {
                     options.MigrationsHistoryTable("MigrationHistory", "SystemData");
                     options.CommandTimeout(20);

@@ -8,12 +8,8 @@
     {
         public BookContext CreateDbContext(string[] args)
         {
-            IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
-            var connectionString = config.GetConnectionString("BookDb");
             var options = new DbContextOptionsBuilder<BookContext>()
-                .UseSqlServer(connectionString, options =>
+                .UseSqlServer("Data Source=.;Initial Catalog=HistoryTablesSample;Integrated Security=False;User ID=sa;Password=Sql-Server-Dev;Encrypt=True;TrustServerCertificate=True;Application Name=EfHistoryTablesSample", options =>
                 {
                     options.MigrationsHistoryTable("MigrationHistory", "SystemData");
                     options.CommandTimeout(20);
